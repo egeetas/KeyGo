@@ -9,7 +9,6 @@
 - [Data Storage](#data-storage)
 - [Unique Selling Point (USP)](#unique-selling-point-usp)
 - [Potential Challenges](#potential-challenges)
-- [Repository Link](#repository-link)
 - [Group Members](#group-members)
 
 ## Project Overview
