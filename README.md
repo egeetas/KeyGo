@@ -64,12 +64,9 @@ KeyGo provides a unified platform where users can conveniently **access vehicles
 - **Complex UI Development**: Implementing **real-time tracking, navigation, and interactive maps**.
 - **Security & Compliance**: Ensuring user authentication, secure transactions, and legal rental agreements.
 
-## Repository Link
-[GitHub Repository](YOUR_GITHUB_REPO_LINK_HERE)
-
 ## Group Members
 - **Ege Taş** - 32378
 - **Halis Cem Şahin** - 31035
-- **Emre Yontucu** - 32462
+- **Emre Yontucu** - 32463
 - **Efe Çalışkaner** - 34479
 - **Fatih Sümer Özoral** - 32546
