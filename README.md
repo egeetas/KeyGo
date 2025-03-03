@@ -50,7 +50,7 @@ KeyGo provides a unified platform where users can conveniently **access vehicles
 - **Reward Points & Discounts**: Driving scores, earned benefits, and redeemable points.
 - **Feedback & Analytics**: User reviews, engagement metrics, and app performance.
 
-## Unique Selling Point (USP)
+## Unique Selling Point 
 - **Dual Rental Model**: Unlike traditional rental apps, KeyGo seamlessly integrates both **minute-based and long-term rental options**.
 - **Gamified Incentives**: Encourages **safe and responsible driving** through reward points and discounts.
 - **Dynamic Pricing & Discounts**: Offers tailored deals based on user behavior and demand.
