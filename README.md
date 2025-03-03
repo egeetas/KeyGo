@@ -21,13 +21,13 @@ KeyGo provides a unified platform where users can conveniently **access vehicles
 - **Exclusive Campaigns**: Users accumulate **discounts and bonuses** based on their rental frequency and driving behavior.
 - **Reward System**: Good driving behavior and adherence to speed limits earn discounts on future rentals.
 - **Hybrid Rental Model**: Users can choose between **on-the-go short-term rentals** or **long-term flexible plans**.
-- **Aesthetically Pleasing UI**: Engaging interface to enhance user experience and interaction.
+- **Aesthetic UI**: Engaging interface to enhance user experience and interaction.
 
 ## Target Audience
 - Anyone **above 2 years of driving experience** can use the app.
 - City dwellers needing **quick, short-term access** to vehicles.
 - Travelers and professionals requiring **long-term rental flexibility**.
-- Businesses looking for **cost-effective fleet rentals**.
+- Businesses looking for **cost-effective car rentals**.
 
 ## Key Features
 - **Hybrid Rental System**: Flexible car rental options for both short-term and long-term needs.
@@ -37,7 +37,7 @@ KeyGo provides a unified platform where users can conveniently **access vehicles
 - **User Verification & Security**: Advanced authentication for safe and secure rentals.
 - **Smart Analytics & Insights**: Rental history tracking, cost management, and personalized recommendations.
 - **Interactive UI & UX**: Smooth and visually appealing interface for an engaging experience.
-- **Diverse Fleet Availability**: Various car options tailored to different needs and budgets.
+- **Diverse Car Availability**: Various car options are assigned to different needs and budgets.
 
 ## Platform
 - Developed for **all mobile platforms** using **Flutter**.
@@ -48,7 +48,6 @@ KeyGo provides a unified platform where users can conveniently **access vehicles
 - **Vehicle Data**: Availability, condition, pricing, and location.
 - **Rental Transactions**: Booking details, payment history, duration of use.
 - **Reward Points & Discounts**: Driving scores, earned benefits, and redeemable points.
-- **Location Data**: Real-time vehicle tracking and user navigation.
 - **Feedback & Analytics**: User reviews, engagement metrics, and app performance.
 
 ## Unique Selling Point (USP)
