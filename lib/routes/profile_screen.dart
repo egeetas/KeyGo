@@ -1,0 +1,344 @@
+import 'package:flutter/material.dart';
+import 'package:keygo_deneme/utils/auth.dart';
+import 'package:keygo_deneme/utils/routes.dart';
+import 'package:keygo_deneme/routes/support_chat.dart';
+
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final user = AuthUtils.currentUser;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
+        ],
+      ),
+      body:
+          user == null
+              ? _buildNotLoggedIn()
+              : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: const BoxDecoration(color: Colors.black),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          Center(
+                            child: Text(
+                              user.fullName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+                          Center(
+                            child: Text(
+                              user.email,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+                          Center(
+                            child: OutlinedButton(
+                              onPressed: () {},
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Colors.white),
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Edit Profile'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'Account',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    _buildListTile(
+                      'Personal Information',
+                      Icons.person_outline,
+                      onTap: () {
+                        _showPersonalInfoDialog(context, user);
+                      },
+                    ),
+
+                    _buildListTile(
+                      'Payment Methods',
+                      Icons.payment,
+                      onTap: () {},
+                    ),
+
+                    // Rental History
+                    _buildListTile(
+                      'Rental History',
+                      Icons.history,
+                      onTap: () {},
+                    ),
+
+                    _buildListTile(
+                      'Our Cars',
+                      Icons.directions_car,
+                      onTap: () {},
+                    ),
+
+                    const Divider(),
+
+                    _buildListTile(
+                      'Help & Support',
+                      Icons.help_outline,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SupportChatPage(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    _buildListTile(
+                      'About KeyGo',
+                      Icons.info_outline,
+                      onTap: () {},
+                    ),
+
+                    _buildListTile(
+                      'Sign Out',
+                      Icons.exit_to_app,
+                      textColor: Colors.red,
+                      iconColor: Colors.red,
+                      onTap: () {
+                        _showSignOutDialog(context);
+                      },
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                        child: Text(
+                          'KeyGo v1.0.0',
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+    );
+  }
+
+  Widget _buildNotLoggedIn() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.account_circle, size: 100, color: Colors.grey),
+          const SizedBox(height: 20),
+          const Text(
+            'You are not logged in',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Login to view your profile',
+            style: TextStyle(color: Colors.grey),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, Routes.login);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              side: const BorderSide(color: Colors.white),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('Go to Login'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSignOutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: Colors.black,
+            title: const Text(
+              'Sign Out',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: const Text(
+              'Are you sure you want to sign out?',
+              style: TextStyle(color: Colors.white),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  AuthUtils.logout();
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    Routes.login,
+                    (route) => false,
+                  );
+                },
+                child: const Text(
+                  'Sign Out',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _showPersonalInfoDialog(BuildContext context, user) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: Colors.black,
+            title: const Text(
+              'Personal Information',
+              style: TextStyle(color: Colors.white),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildInfoRow('First Name', user.firstName),
+                _buildInfoRow('Last Name', user.lastName),
+                _buildInfoRow('Email', user.email),
+                _buildInfoRow('Phone', user.phone),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListTile(
+    String title,
+    IconData icon, {
+    Widget? trailing,
+    Function()? onTap,
+    Color? textColor,
+    Color? iconColor,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor ?? Colors.white),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: textColor ?? Colors.white,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      trailing:
+          trailing ??
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white),
+      onTap: onTap,
+    );
+  }
+}
