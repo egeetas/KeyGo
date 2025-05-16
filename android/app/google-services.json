@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "778373166371",
+    "project_id": "keygo-7d6d2",
+    "storage_bucket": "keygo-7d6d2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778373166371:android:a8bb7f60bc7b0e12580896",
+        "android_client_info": {
+          "package_name": "com.example.keygo_deneme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9T-dAeNJ7F_GYpfu1UvCHQDDCeFfqPtQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
