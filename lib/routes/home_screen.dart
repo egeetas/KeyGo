@@ -10,23 +10,38 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _locationController = TextEditingController();
+  String? _selectedLocation;
   final TextEditingController _pickupDateController = TextEditingController();
   final TextEditingController _returnDateController = TextEditingController();
   int _selectedIndex = 0;
   final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
 
+  final List<String> _locations = [
+    'Istanbul Airport',
+    'Sabiha Gokcen Airport',
+    'Ankara Esenboga Airport',
+    'Antalya Airport',
+    'Izmir Adnan Menderes Airport',
+    'Doha Hamad International Airport',
+    'Dubai International Airport',
+    'London Heathrow Airport',
+    'New York JFK Airport',
+    'Paris Charles de Gaulle Airport',
+    'Frankfurt Airport',
+    'Los Angeles LAX Airport',
+  ];
+
   @override
   void initState() {
     super.initState();
     _pickupDateController.text = _dateFormat.format(DateTime.now());
-    final returnDate = DateTime.now().add(const Duration(days: 3));
-    _returnDateController.text = _dateFormat.format(returnDate);
+    _returnDateController.text = _dateFormat.format(
+      DateTime.now().add(const Duration(days: 3)),
+    );
   }
 
   @override
   void dispose() {
-    _locationController.dispose();
     _pickupDateController.dispose();
     _returnDateController.dispose();
     super.dispose();
@@ -39,33 +54,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _selectPickupDate() async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.black,
-              onPrimary: Colors.white,
+      builder:
+          (ctx, child) => Theme(
+            data: Theme.of(ctx).copyWith(
+              colorScheme: const ColorScheme.light(
+                primary: Colors.black,
+                onPrimary: Colors.white,
+              ),
             ),
+            child: child!,
           ),
-          child: child!,
-        );
-      },
     );
-
     if (picked != null) {
       setState(() {
         _pickupDateController.text = _dateFormat.format(picked);
-        final returnDate = DateTime.parse(
-          _dateFormat.parse(_returnDateController.text).toString(),
-        );
+        final returnDate = _dateFormat.parse(_returnDateController.text);
         if (returnDate.isBefore(picked)) {
-          final newReturnDate = picked.add(const Duration(days: 1));
-          _returnDateController.text = _dateFormat.format(newReturnDate);
+          _returnDateController.text = _dateFormat.format(
+            picked.add(const Duration(days: 1)),
+          );
         }
       });
     }
@@ -73,25 +85,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _selectReturnDate() async {
     final pickupDate = _dateFormat.parse(_pickupDateController.text);
-
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: pickupDate.add(const Duration(days: 1)),
       firstDate: pickupDate.add(const Duration(days: 1)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.black,
-              onPrimary: Colors.white,
+      builder:
+          (ctx, child) => Theme(
+            data: Theme.of(ctx).copyWith(
+              colorScheme: const ColorScheme.light(
+                primary: Colors.black,
+                onPrimary: Colors.white,
+              ),
             ),
+            child: child!,
           ),
-          child: child!,
-        );
-      },
     );
-
     if (picked != null) {
       setState(() {
         _returnDateController.text = _dateFormat.format(picked);
@@ -102,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           Expanded(
@@ -128,18 +138,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-
                 Positioned(
-                  top: 50,
-                  left: 15,
-                  child: Image.asset(
-                    'assets/keygo_logo.png',
-                    width: 200,
-                    height: 80,
-                    alignment: Alignment.centerLeft,
+                  top: 40,
+                  left: -50,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Image.asset(
+                      'assets/keygo_logo.png',
+                      width: 200,
+                      height: 80,
+                    ),
                   ),
                 ),
-
                 Positioned(
                   top: 50,
                   right: 20,
@@ -150,18 +160,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: const Icon(
                         Icons.notifications,
                         color: Colors.white,
-                        size: 22,
                       ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/notifications');
-                      },
+                      onPressed:
+                          () => Navigator.pushNamed(context, '/notifications'),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-
           Expanded(
             flex: 5,
             child: Container(
@@ -170,23 +177,87 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextField(
-                    controller: _locationController,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      hintText: 'Pickup station',
-                      hintStyle: TextStyle(color: Colors.grey.shade400),
-                      filled: true,
-                      fillColor: Colors.grey.shade900,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
+                  Autocomplete<String>(
+                    optionsBuilder: (TextEditingValue value) {
+                      if (value.text.isEmpty) {
+                        return const Iterable<String>.empty();
+                      }
+                      return _locations.where(
+                        (loc) => loc.toLowerCase().startsWith(
+                          value.text.toLowerCase(),
+                        ),
+                      );
+                    },
+                    onSelected: (selection) {
+                      _selectedLocation = selection;
+                    },
+                    fieldViewBuilder: (
+                      context,
+                      controller,
+                      focusNode,
+                      onSubmitted,
+                    ) {
+                      return TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: Colors.grey,
+                          ),
+                          hintText: 'Pickup station',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          filled: true,
+                          fillColor: Colors.grey.shade900,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        onChanged: (_) {
+                          _selectedLocation = null;
+                        },
+                      );
+                    },
+                    optionsViewBuilder: (context, onSelected, options) {
+                      return Align(
+                        alignment: Alignment.topLeft,
+                        child: Material(
+                          color: Colors.grey.shade900,
+                          elevation: 4,
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxHeight: 200),
+                            child:
+                                options.isEmpty
+                                    ? const Padding(
+                                      padding: EdgeInsets.all(12),
+                                      child: Text(
+                                        'No matches found',
+                                        style: TextStyle(color: Colors.white54),
+                                      ),
+                                    )
+                                    : ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      itemCount: options.length,
+                                      itemBuilder: (ctx, i) {
+                                        final option = options.elementAt(i);
+                                        return ListTile(
+                                          title: Text(
+                                            option,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          onTap: () => onSelected(option),
+                                        );
+                                      },
+                                    ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-
                   const SizedBox(height: 25),
-
                   Row(
                     children: [
                       Expanded(
@@ -206,16 +277,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-
                   const Spacer(),
-
                   SizedBox(
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (_locationController.text.trim().isEmpty) {
-                          _showError('Please enter a pickup location');
+                        if (_selectedLocation == null) {
+                          _showError('Please select a pickup station');
                           return;
                         }
                         Navigator.pushNamed(context, Routes.cars);
@@ -239,20 +308,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() => _selectedIndex = index);
-          if (index == 1) {
-            Navigator.pushNamed(context, '/map');
-          } else if (index == 2) {
-            Navigator.pushNamed(context, Routes.profile);
-          }
+        onTap: (i) {
+          setState(() => _selectedIndex = i);
+          if (i == 1) Navigator.pushNamed(context, '/map');
+          if (i == 2) Navigator.pushNamed(context, Routes.profile);
         },
         items: const [
           BottomNavigationBarItem(
@@ -270,40 +334,34 @@ class _HomeScreenState extends State<HomeScreen> {
     required String label,
     required TextEditingController controller,
     required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade800),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Icon(
-                  Icons.calendar_today,
-                  color: Colors.grey.shade400,
-                  size: 16,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  controller.text,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ],
-        ),
+  }) => InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade800),
+        borderRadius: BorderRadius.circular(4),
       ),
-    );
-  }
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade400),
+              const SizedBox(width: 6),
+              Text(
+                controller.text,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
 }

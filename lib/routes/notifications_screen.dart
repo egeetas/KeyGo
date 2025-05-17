@@ -34,7 +34,7 @@ class NotificationsScreen extends StatelessWidget {
         itemCount: displayedNotifications.length,
         itemBuilder: (context, index) {
           return ListTile(
-            leading: Icon(Icons.notifications, color: Colors.cyan),
+            leading: Icon(Icons.notifications, color: Colors.white),
             title: Text(displayedNotifications[index]),
             tileColor: Colors.grey[900],
             textColor: Colors.white,

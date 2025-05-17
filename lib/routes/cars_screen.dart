@@ -103,7 +103,7 @@ class CarsScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -159,6 +159,15 @@ class CarsScreen extends StatelessWidget {
                   arguments: car['id'],
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                side: const BorderSide(color: Colors.white, width: 0.5),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               child: const Text("Book Now"),
             ),
           ),

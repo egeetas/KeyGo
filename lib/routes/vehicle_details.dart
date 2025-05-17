@@ -112,7 +112,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.black,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -185,7 +185,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
 
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: 20,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pushNamed(

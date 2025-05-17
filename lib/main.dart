@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keygo_deneme/routes/login_screen.dart';
+import 'package:keygo_deneme/routes/signup_screen.dart';
 import 'package:keygo_deneme/routes/home_screen.dart';
 import 'package:keygo_deneme/routes/cars_screen.dart';
 import 'package:keygo_deneme/routes/vehicle_details.dart';
@@ -19,6 +20,7 @@ class Routes {
   static const String map = '/map';
   static const String checkout = '/checkout';
   static const String notifications = '/notifications';
+  static const String sign = '/sign';
 }
 
 void main() {
@@ -79,6 +81,7 @@ class MyApp extends StatelessWidget {
       initialRoute: Routes.login,
       routes: {
         Routes.login: (context) => const LoginScreen(),
+        Routes.sign: (context) => const SignUpScreen(),
         Routes.home: (context) => const HomeScreen(),
         Routes.profile: (context) => const profile.ProfileScreen(),
         Routes.cars: (context) => const CarsScreen(),
