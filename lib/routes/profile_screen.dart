@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keygo_deneme/utils/auth.dart';
 import 'package:keygo_deneme/utils/routes.dart';
 import 'package:keygo_deneme/routes/support_chat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,7 +14,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    final user = AuthUtils.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -60,10 +61,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-
                           Center(
                             child: Text(
-                              user.fullName,
+                              user.displayName ?? 'No Name',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 22,
@@ -73,10 +73,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
-
                           Center(
                             child: Text(
-                              user.email,
+                              user.email ?? 'No Email',
                               style: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 16,
@@ -85,7 +84,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
-
                           Center(
                             child: OutlinedButton(
                               onPressed: () {},
@@ -111,13 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
 
-                    _buildListTile(
-                      'Personal Information',
-                      Icons.person_outline,
-                      onTap: () {
-                        _showPersonalInfoDialog(context, user);
-                      },
-                    ),
+                    _buildListTile('Email', Icons.mail_outline, onTap: () {}),
 
                     _buildListTile(
                       'Payment Methods',
@@ -125,7 +117,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {},
                     ),
 
-                    // Rental History
                     _buildListTile(
                       'Rental History',
                       Icons.history,
@@ -248,8 +239,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: const Text('Cancel'),
               ),
               TextButton(
-                onPressed: () {
-                  AuthUtils.logout();
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  if (!mounted) return;
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     Routes.login,
@@ -263,58 +255,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
-    );
-  }
-
-  void _showPersonalInfoDialog(BuildContext context, user) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            backgroundColor: Colors.black,
-            title: const Text(
-              'Personal Information',
-              style: TextStyle(color: Colors.white),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Colors.grey.shade800),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildInfoRow('First Name', user.firstName),
-                _buildInfoRow('Last Name', user.lastName),
-                _buildInfoRow('Email', user.email),
-                _buildInfoRow('Phone', user.phone),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                style: TextButton.styleFrom(foregroundColor: Colors.white),
-                child: const Text('Close'),
-              ),
-            ],
-          ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 16, color: Colors.white),
-          ),
-        ],
-      ),
     );
   }
 

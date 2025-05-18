@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keygo_deneme/utils/auth.dart';
 import 'package:keygo_deneme/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,10 +31,28 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-        AuthUtils.login(name: "Demo User", email: _emailController.text.trim());
+        // 🔥 Firebase login işlemi
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
 
         if (!mounted) return;
         Navigator.pushReplacementNamed(context, Routes.home);
+      } on FirebaseAuthException catch (e) {
+        if (!mounted) return;
+        String message;
+        if (e.code == 'user-not-found') {
+          message = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          message = 'Incorrect password.';
+        } else {
+          message = 'Login failed. Please try again.';
+        }
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       } catch (e) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(

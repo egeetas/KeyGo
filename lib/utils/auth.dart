@@ -1,26 +1,33 @@
-import 'package:keygo_deneme/utils/user_models.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthUtils {
-  static User? _currentUser;
-
-  static User? get currentUser => _currentUser;
-
-  static bool get isLoggedIn => _currentUser != null;
-
-  static void login({required String name, required String email}) {
-    final nameParts = name.trim().split(' ');
-    String firstName = nameParts.first;
-    String lastName = nameParts.length > 1 ? nameParts.skip(1).join(' ') : '';
-
-    _currentUser = User(
-      firstName: firstName,
-      lastName: lastName,
+  /// Kullanıcıyı email & şifre ile giriş yaptırır
+  static Future<void> login({
+    required String email,
+    required String password,
+  }) async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
-      phone: '+90 555 123 4567',
+      password: password,
     );
   }
 
-  static void logout() {
-    _currentUser = null;
+  /// Kullanıcıyı email & şifre ile kaydeder
+  static Future<void> register({
+    required String email,
+    required String password,
+  }) async {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
   }
+
+  /// Firebase oturumunu sonlandırır
+  static Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  /// Mevcut kullanıcıyı döndürür
+  static User? get currentUser => FirebaseAuth.instance.currentUser;
 }

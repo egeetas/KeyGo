@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keygo_deneme/utils/auth.dart';
 import 'package:keygo_deneme/utils/routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -67,14 +68,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
 
     try {
-      AuthUtils.login(name: '$first $last', email: email);
+      // 🔥 Firebase ile kullanıcı oluşturma
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
       if (!mounted) return;
+
+      // Başarılı kayıt → home ekranına yönlendir
       Navigator.pushReplacementNamed(context, Routes.home);
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        if (e.code == 'email-already-in-use') {
+          _errorText = 'This email is already registered.';
+        } else if (e.code == 'invalid-email') {
+          _errorText = 'Invalid email format.';
+        } else {
+          _errorText = 'Sign up failed. Please try again.';
+        }
+      });
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorText = 'Sign up failed. Please try again.';
+        _errorText = 'Something went wrong. Try again later.';
       });
     } finally {
       if (!mounted) return;
