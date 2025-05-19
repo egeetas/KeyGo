@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:keygo_deneme/utils/auth.dart';
 import 'package:keygo_deneme/utils/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -68,15 +68,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
 
     try {
-      // 🔥 Firebase ile kullanıcı oluşturma
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'firstName': first,
+        'lastName': last,
+        'email': email,
+        'phone': phone,
+        'createdAt': Timestamp.now(),
+      });
+
       if (!mounted) return;
 
-      // Başarılı kayıt → home ekranına yönlendir
       Navigator.pushReplacementNamed(context, Routes.home);
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
@@ -133,7 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Merkezi hata mesajı
+              
               if (_errorText != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),

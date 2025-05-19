@@ -25,6 +25,7 @@ class Routes {
   static const String checkout = '/checkout';
   static const String notifications = '/notifications';
   static const String sign = '/sign';
+  static const String rentalhistory = '/rentalhistory';
 }
 
 void main() async {

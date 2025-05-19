@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:keygo_deneme/utils/auth.dart';
 import 'package:keygo_deneme/utils/routes.dart';
 import 'package:keygo_deneme/routes/support_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:keygo_deneme/routes/rental_history.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,9 +13,40 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Map<String, dynamic>? _userData;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (doc.exists) {
+      setState(() {
+        _userData = doc.data();
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (user == null || _userData == null) {
+      return _buildNotLoggedIn();
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -26,154 +58,147 @@ class _ProfileScreenState extends State<ProfileScreen> {
           IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
         ],
       ),
-      body:
-          user == null
-              ? _buildNotLoggedIn()
-              : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: const BoxDecoration(color: Colors.black),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Center(
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 3,
-                                ),
-                              ),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.person,
-                                  size: 60,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Center(
-                            child: Text(
-                              user.displayName ?? 'No Name',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Center(
-                            child: Text(
-                              user.email ?? 'No Email',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Center(
-                            child: OutlinedButton(
-                              onPressed: () {},
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.white),
-                                foregroundColor: Colors.white,
-                              ),
-                              child: const Text('Edit Profile'),
-                            ),
-                          ),
-                        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(color: Colors.black),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 3),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.person, size: 60, color: Colors.grey),
                       ),
                     ),
-
-                    const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(
-                        'Account',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: Text(
+                      '${_userData!['firstName']} ${_userData!['lastName']}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
+                      textAlign: TextAlign.center,
                     ),
-
-                    _buildListTile('Email', Icons.mail_outline, onTap: () {}),
-
-                    _buildListTile(
-                      'Payment Methods',
-                      Icons.payment,
-                      onTap: () {},
-                    ),
-
-                    _buildListTile(
-                      'Rental History',
-                      Icons.history,
-                      onTap: () {},
-                    ),
-
-                    _buildListTile(
-                      'Our Cars',
-                      Icons.directions_car,
-                      onTap: () {},
-                    ),
-
-                    const Divider(),
-
-                    _buildListTile(
-                      'Help & Support',
-                      Icons.help_outline,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SupportChatPage(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    _buildListTile(
-                      'About KeyGo',
-                      Icons.info_outline,
-                      onTap: () {},
-                    ),
-
-                    _buildListTile(
-                      'Sign Out',
-                      Icons.exit_to_app,
-                      textColor: Colors.red,
-                      iconColor: Colors.red,
-                      onTap: () {
-                        _showSignOutDialog(context);
-                      },
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        child: Text(
-                          'KeyGo v1.0.0',
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      _userData!['email'] ?? 'No Email',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
                       ),
+                      textAlign: TextAlign.center,
                     ),
-                  ],
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      _userData!['phone'] ?? 'No Phone',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.white),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Edit Profile'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Account',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            _buildListTile('Email', Icons.mail_outline, onTap: () {}),
+
+            _buildListTile('Payment Methods', Icons.payment, onTap: () {}),
+
+            _buildListTile(
+              'Rental History',
+              Icons.history,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RentalHistory(),
+                  ),
+                );
+              },
+            ),
+
+            _buildListTile('Our Cars', Icons.directions_car, onTap: () {}),
+
+            const Divider(),
+
+            _buildListTile(
+              'Help & Support',
+              Icons.help_outline,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SupportChatPage(),
+                  ),
+                );
+              },
+            ),
+
+            _buildListTile('About KeyGo', Icons.info_outline, onTap: () {}),
+
+            _buildListTile(
+              'Sign Out',
+              Icons.exit_to_app,
+              textColor: Colors.red,
+              iconColor: Colors.red,
+              onTap: () {
+                _showSignOutDialog(context);
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  'KeyGo v1.0.0',
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

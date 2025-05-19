@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:keygo_deneme/utils/auth.dart';
 import 'package:keygo_deneme/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -31,7 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-        // 🔥 Firebase login işlemi
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),

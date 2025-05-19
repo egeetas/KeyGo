@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:keygo_deneme/utils/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

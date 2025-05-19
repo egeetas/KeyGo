@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key});
@@ -107,7 +109,53 @@ class CheckoutPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                final user = FirebaseAuth.instance.currentUser;
+                if (user == null) return;
+
+                await FirebaseFirestore.instance.collection('rentals').add({
+                  'userId': user.uid,
+                  'carName': carName,
+                  'carPrice': price,
+                  'insurancePlan': args['insurancePlan'] ?? 'None',
+                  'createdAt': Timestamp.now(),
+                  'status': 'confirmed',
+                });
+
+                if (context.mounted) {
+                  showDialog(
+                    context: context,
+                    builder:
+                        (_) => AlertDialog(
+                          backgroundColor: Colors.black,
+                          title: const Text(
+                            'Reservation Completed',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          content: const Text(
+                            'Your car has been reserved successfully!',
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context); 
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  '/home',
+                                  (route) => false,
+                                ); 
+                              },
+                              child: const Text(
+                                'OK',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                  );
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
