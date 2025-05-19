@@ -46,29 +46,104 @@ class RentalHistory extends StatelessWidget {
             itemCount: docs.length,
             itemBuilder: (context, index) {
               final rental = docs[index].data() as Map<String, dynamic>;
+              final docId = docs[index].id;
+
+              final carName = rental['carName'] ?? 'Unknown Car';
+              final status = rental['status'] ?? 'unknown';
 
               return Card(
                 color: Colors.grey[900],
-                elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                elevation: 4,
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 child: ListTile(
-                  leading: const Icon(
-                    Icons.directions_car,
-                    color: Colors.white,
-                  ),
+                  leading:
+                      rental['imagePath'] != null
+                          ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              rental['imagePath'],
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                          : const Icon(
+                            Icons.directions_car,
+                            color: Colors.white,
+                          ),
                   title: Text(
-                    rental['carName'] ?? 'Unknown Car',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  trailing: Text(
-                    '\$${rental['carPrice'] ?? '0'}',
+                    carName,
                     style: const TextStyle(
-                      color: Colors.greenAccent,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  subtitle: Text(
+                    'Status: $status',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                  trailing: PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert, color: Colors.white),
+                    onSelected: (value) async {
+                      if (value == 'cancel') {
+                        await FirebaseFirestore.instance
+                            .collection('rentals')
+                            .doc(docId)
+                            .update({'status': 'cancelled'});
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Rental cancelled')),
+                        );
+                      } else if (value == 'delete') {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder:
+                              (context) => AlertDialog(
+                                title: const Text('Confirm Delete'),
+                                content: const Text(
+                                  'Do you want to delete this rental?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.pop(context, false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.pop(context, true),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                        );
+
+                        if (confirm == true) {
+                          await FirebaseFirestore.instance
+                              .collection('rentals')
+                              .doc(docId)
+                              .delete();
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Rental deleted')),
+                          );
+                        }
+                      }
+                    },
+                    itemBuilder:
+                        (context) => [
+                          const PopupMenuItem(
+                            value: 'cancel',
+                            child: Text('Cancel Rental'),
+                          ),
+                          const PopupMenuItem(
+                            value: 'delete',
+                            child: Text('Delete Rental'),
+                          ),
+                        ],
                   ),
                 ),
               );

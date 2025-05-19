@@ -120,6 +120,7 @@ class CheckoutPage extends StatelessWidget {
                   'insurancePlan': args['insurancePlan'] ?? 'None',
                   'createdAt': Timestamp.now(),
                   'status': 'confirmed',
+                  'imagePath': imagePath,
                 });
 
                 if (context.mounted) {
@@ -139,12 +140,12 @@ class CheckoutPage extends StatelessWidget {
                           actions: [
                             TextButton(
                               onPressed: () {
-                                Navigator.pop(context); 
+                                Navigator.pop(context);
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   '/home',
                                   (route) => false,
-                                ); 
+                                );
                               },
                               child: const Text(
                                 'OK',
