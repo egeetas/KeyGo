@@ -122,7 +122,7 @@ class _InsuranceSelectionPageState extends State<InsuranceSelectionPage> {
                 ),
               ),
 
-              const SizedBox(height: 32), // Gesture bar için ekstra boşluk
+              const SizedBox(height: 32), 
             ],
           ),
         ),
