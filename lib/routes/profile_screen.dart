@@ -154,8 +154,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildListTile('Payment Methods', Icons.payment, onTap: () {}),
 
             _buildListTile(
-              'Rental History',
-              Icons.history,
+              'Rentals',
+              Icons.directions_car,
               onTap: () {
                 Navigator.push(
                   context,
@@ -165,8 +165,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               },
             ),
-
-            _buildListTile('Our Cars', Icons.directions_car, onTap: () {}),
 
             const Divider(),
 

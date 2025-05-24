@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:keygo_deneme/providers/booking_provider.dart';
 
 class InsuranceSelectionPage extends StatefulWidget {
-  final String carImagePath;
-  final String carName;
-  final String carPrice;
-
-  const InsuranceSelectionPage({
-    super.key,
-    required this.carImagePath,
-    required this.carName,
-    required this.carPrice,
-  });
+  const InsuranceSelectionPage({super.key});
 
   @override
   State<InsuranceSelectionPage> createState() => _InsuranceSelectionPageState();
@@ -30,6 +23,8 @@ class _InsuranceSelectionPageState extends State<InsuranceSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final booking = Provider.of<BookingProvider>(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text("Select Insurance")),
       body: SafeArea(
@@ -39,17 +34,20 @@ class _InsuranceSelectionPageState extends State<InsuranceSelectionPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
-              Image.asset(widget.carImagePath, height: 150),
+              Image.asset(
+                booking.imagePath ?? 'assets/placeholder.png',
+                height: 150,
+              ),
               const SizedBox(height: 16),
               Text(
-                widget.carName,
+                booking.carName ?? 'Unknown',
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                '\$${widget.carPrice} / day',
+                '\$${booking.carPrice?.toStringAsFixed(2) ?? '0'} / day',
                 style: const TextStyle(fontSize: 18, color: Colors.grey),
               ),
               const SizedBox(height: 24),
@@ -99,30 +97,24 @@ class _InsuranceSelectionPageState extends State<InsuranceSelectionPage> {
                     }).toList(),
               ),
 
-              const SizedBox(height: 40), 
+              const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed:
                       selectedPlan != null
                           ? () {
-                            Navigator.pushNamed(
+                            Provider.of<BookingProvider>(
                               context,
-                              '/checkout',
-                              arguments: {
-                                'carName': widget.carName,
-                                'carPrice': '\$${widget.carPrice}',
-                                'imagePath': widget.carImagePath,
-                                'insurancePlan': selectedPlan!,
-                              },
-                            );
+                              listen: false,
+                            ).setInsurance(selectedPlan!);
+                            Navigator.pushNamed(context, '/checkout');
                           }
                           : null,
                   child: const Text("Continue to Checkout"),
                 ),
               ),
-
-              const SizedBox(height: 32), 
+              const SizedBox(height: 32),
             ],
           ),
         ),

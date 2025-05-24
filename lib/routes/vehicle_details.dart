@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:keygo_deneme/providers/booking_provider.dart';
 
 class VehicleDetailsScreen extends StatefulWidget {
   final int carId;
@@ -188,15 +190,16 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
               height: 20,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(
+                  final price = car['pricePerDay']?.toDouble() ?? 0.0;
+                  final name = car['name'] ?? 'Unknown';
+                  final image = car['imagePath'] ?? 'assets/keygo_logo.png';
+
+                  Provider.of<BookingProvider>(
                     context,
-                    '/insurance',
-                    arguments: {
-                      'carName': car['name'],
-                      'carPrice': car['pricePerDay'].toString(),
-                      'carImagePath': car['imagePath'],
-                    },
-                  );
+                    listen: false,
+                  ).setCarDetails(name, price, image);
+
+                  Navigator.pushNamed(context, '/insurance');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,

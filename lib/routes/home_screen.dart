@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:keygo_deneme/utils/routes.dart';
+import 'package:provider/provider.dart';
+import 'package:keygo_deneme/providers/booking_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -287,6 +289,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           _showError('Please select a pickup station');
                           return;
                         }
+                        final pickupDate = _dateFormat.parse(
+                          _pickupDateController.text,
+                        );
+                        final returnDate = _dateFormat.parse(
+                          _returnDateController.text,
+                        );
+
+                        Provider.of<BookingProvider>(
+                          context,
+                          listen: false,
+                        ).setLocation(_selectedLocation!);
+
+                        Provider.of<BookingProvider>(
+                          context,
+                          listen: false,
+                        ).setDates(pickupDate, returnDate);
+
                         Navigator.pushNamed(context, Routes.cars);
                       },
                       style: ElevatedButton.styleFrom(

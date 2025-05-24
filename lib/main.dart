@@ -4,6 +4,7 @@ import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:keygo_deneme/providers/rental_provider.dart';
 import 'package:keygo_deneme/providers/auth_provider.dart' as myauth;
+import 'package:keygo_deneme/providers/booking_provider.dart';
 
 import 'package:keygo_deneme/routes/login_screen.dart';
 import 'package:keygo_deneme/routes/signup_screen.dart';
@@ -39,6 +40,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => myauth.AuthProvider()),
         ChangeNotifierProvider(create: (_) => RentalProvider()),
+        ChangeNotifierProvider(create: (_) => BookingProvider()),
       ],
       child: const MyApp(),
     ),
@@ -121,22 +123,8 @@ class MyApp extends StatelessWidget {
         }
 
         if (settings.name == Routes.insurance) {
-          final args = settings.arguments as Map<String, dynamic>?;
-          if (args == null) {
-            return MaterialPageRoute(
-              builder:
-                  (context) => const ErrorScreen(
-                    message: 'Invalid insurance parameters',
-                  ),
-            );
-          }
           return MaterialPageRoute(
-            builder:
-                (context) => InsuranceSelectionPage(
-                  carName: args['carName'] ?? 'Unknown Car',
-                  carPrice: args['carPrice']?.toString() ?? '0',
-                  carImagePath: args['carImagePath'] ?? 'assets/keygo_logo.png',
-                ),
+            builder: (context) => const InsuranceSelectionPage(),
           );
         }
 
