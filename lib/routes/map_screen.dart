@@ -4,6 +4,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:math';
+import 'package:provider/provider.dart';
+import 'package:keygo_deneme/providers/booking_provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -232,14 +234,24 @@ class _CarMapScreenState extends State<CarMapScreen> {
                     right: 0,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(
+                        final booking = Provider.of<BookingProvider>(
                           context,
-                          '/checkout',
-                          arguments: {
-                            'carName': selectedCarName,
-                            'carPrice': selectedCarPrice,
-                          },
+                          listen: false,
                         );
+
+                        booking.setCarDetails(
+                          selectedCarName,
+                          double.tryParse(
+                                selectedCarPrice.replaceAll(
+                                  RegExp(r'[^\d.]'),
+                                  '',
+                                ),
+                              ) ??
+                              0,
+                          selectedCarImage,
+                        );
+
+                        Navigator.pushNamed(context, '/insurance');
                       },
                       child: Text('Rent Now'),
                     ),
